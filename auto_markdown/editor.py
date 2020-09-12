@@ -22,13 +22,21 @@ import base64
 
 from . import config
 
-def generateHtmlFromMarkdown(field_plain, field_html):
-    if not field_plain:
-        field_plain = ""
-    else:
-        field_plain = field_plain.replace("\xc2\xa0", " ").replace("\xa0", " ") # non-breaking space
+def simpleMarkdownFromHTML(html_text):
+    """Converts various HTML objects in Anki generated HTML to markdown."""
+    return (html_text
+        .replace('<br>', '\n')
+        .replace('<div>', '\n')
+        .replace('</div>', '')
+        .replace('&nbsp;', ' ')
+        .replace('&lt;', '<')
+        .replace('&gt;', '>')
+        )
 
-    generated_html = markdown.markdown(field_plain, extensions=[
+def generateHtmlFromMarkdown(field_plain, field_html):
+    sanitized_html = simpleMarkdownFromHTML(field_html)
+
+    generated_html = markdown.markdown(sanitized_html, extensions=[
         AbbrExtension(),
         CodeHiliteExtension(
             noclasses = True, 
