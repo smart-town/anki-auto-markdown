@@ -22,7 +22,7 @@ import base64
 
 from . import config
 
-def simpleMarkdownFromHTML(html_text):
+def sanitize(html_text):
     """Converts various HTML objects in Anki generated HTML to markdown."""
     return (html_text
         .replace('<br>', '\n')
@@ -31,10 +31,11 @@ def simpleMarkdownFromHTML(html_text):
         .replace('&nbsp;', ' ')
         .replace('&lt;', '<')
         .replace('&gt;', '>')
+        .replace('&amp;', '&')
         )
 
 def generateHtmlFromMarkdown(field_plain, field_html):
-    sanitized_html = simpleMarkdownFromHTML(field_html)
+    sanitized_html = sanitize(field_html)
 
     generated_html = markdown.markdown(sanitized_html, extensions=[
         AbbrExtension(),
